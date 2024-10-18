@@ -168,20 +168,14 @@ Set the URL to http://prometheus-server.default.svc.cluster.local:80.
 
 deploy cadvisor it should be on monitoring/cadvisor.yaml
 ```
-kubectl apply -f caadvisor.yaml
+kubectl apply -f cadvisor.yaml
 ```
 
 configure the cadvisor it should be on monitoring/values.yaml
 ```
-helm upgrade prometheus prometheus-community/prometheus -f values.yaml
+helm upgrade prometheus prometheus-community/prometheus -f values.yaml && kubectl patch ds monitoring-prometheus-node-exporter --type "json" -p '[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]'
 ```
-
-import cadvisor to dashboard
-```
-go to the grafana dashboard library.
-search for cadvisor dashboards (e.g., Dashboard ID 893).
-import the dashboard by copying the id and navigating to create -> import in grafana.
-```
+im sorry i already test it and it loss many metrics when using dashboard from template dashboard grafana :(
 
 
 
