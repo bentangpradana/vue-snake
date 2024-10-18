@@ -105,6 +105,11 @@ after run this command try to ur browser http://localhost:8080
 kubectl port-forward svc/vue-snake-game 8080:8080
 ```
 
+### here the video results
+```
+https://drive.google.com/file/d/1MB75aMf5QtHD57rtQin-fQLtzD7Fobh6/view?usp=sharing
+```
+
 ## now monitoring 
 im using helm package manager for my grafana and prometheus
 
