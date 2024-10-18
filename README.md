@@ -105,7 +105,83 @@ after run this command try to ur browser http://localhost:8080
 kubectl port-forward svc/vue-snake-game 8080:8080
 ```
 
+## now monitoring 
+im using helm package manager for my grafana and prometheus
 
+### installing helm
+this script from the official helm website
+```
+ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+ chmod 700 get_helm.sh
+ ./get_helm.sh
+```
+check the version 
+```
+helm version
+```
+
+### Installing prometheus and grafana
+
+add the official repo 
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+```
+check the repo list 
+```
+helm repo list
+```
+
+installing prometheus
+```
+helm install prometheus prometheus-community/prometheus
+```
+check it ur pods its will be error in docker dekstop because the limitation on docker dekstop bind propagation defaults to rprivate for both bind mounts and volumes
+```
+kubectl patch ds monitoring-prometheus-node-exporter --type "json" -p '[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]'
+```
+installing grafana
+```
+helm install grafana grafana/grafana
+```
+
+retrive the grafana password 
+```
+kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+
+```
+
+acces to grafana
+```
+kubectl port-forward service/grafana 3000:80
+```
+
+configure prometheus as a data source in grafana
+```
+Once logged into Grafana, add Prometheus as a data source:
+
+Go to Configuration -> Data Sources.
+Click Add data source and select Prometheus.
+Set the URL to http://prometheus-server.default.svc.cluster.local:80.
+```
+
+deploy cadvisor it should be on monitoring/cadvisor.yaml
+```
+kubectl apply -f caadvisor.yaml
+```
+
+configure the cadvisor it should be on monitoring/values.yaml
+```
+helm upgrade prometheus prometheus-community/prometheus -f values.yaml
+```
+
+import cadvisor to dashboard
+```
+go to the grafana dashboard library.
+search for cadvisor dashboards (e.g., Dashboard ID 893).
+import the dashboard by copying the id and navigating to create -> import in grafana.
+```
 
 
 
