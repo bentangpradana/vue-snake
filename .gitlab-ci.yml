@@ -1,0 +1,42 @@
+image: docker:stable
+stages:
+  - docker_build
+  - deploy
+
+docker_build_job:
+  image: docker:latest
+  stage: docker_build
+  tags:
+    - bentang-pc
+  script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD registry.gitlab.com
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID .
+    - docker push $CI_REGISTRY_IMAGE:$CI_PIPELINE_ID
+    - docker rmi --force  $(docker images | grep vue-snake | awk '{print $3}')
+  only:
+    - main
+docker_build_job:
+  image: docker:latest
+  stage: docker_build
+  tags:
+    - bentang-pc
+  script:
+    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD registry.gitlab.com
+    - docker build -t registry.gitlab.com/bentangpradana/vue-snake:$CI_PIPELINE_ID .
+    - docker push registry.gitlab.com/bentangpradana/vue-snake:$CI_PIPELINE_ID
+  only:
+    - main
+
+deploy:
+  image: alpine:latest
+  stage: deploy
+  tags:
+    - bentang-pc
+  script:
+    - apk update && apk add openssh-client sshpass
+    - sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no -p 22 $SERVER_USER@$SERVER_IP "cd /home/benja/vue-snake/deployment && sed -i 's/IMAGE_TAG/$CI_PIPELINE_ID/g' deployment.yaml && kubectl apply -f ."
+  only:
+    - main
+
+
+

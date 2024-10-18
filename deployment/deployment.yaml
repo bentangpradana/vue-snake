@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vue-snake-game
+  labels:
+    app: vue-snake-game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vue-snake-game
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: vue-snake-game
+    spec:
+      imagePullSecrets:
+      - name: gitlab-registry  # Keep this if you need to pull from a private registry
+      containers:
+      - name: vue-snake-game
+        image: registry.gitlab.com/bentangpradana/vue-snake:IMAGE_TAG  # Update this with the actual image tag
+        resources:
+          requests:
+            cpu: "100m"    # Minimum CPU requested
+            memory: "256Mi" # Minimum memory requested
+          limits:
+            cpu: "500m"    # Maximum CPU allowed
+            memory: "512Mi" # Maximum memory allowed
+        ports:
+         - name: http
+           containerPort: 8080  # Change this to 8080 for the Vue app
+           protocol: TCP
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: vue-snake-game
+  labels:
+    app: vue-snake-game
+spec:
+  selector:
+    app: vue-snake-game
+  type: ClusterIP
+  ports:
+    - port: 8080  # Change this to 8080 to match the container port
+      targetPort: http
+      protocol: TCP
+      name: http
