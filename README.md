@@ -179,4 +179,4 @@ configure the cadvisor it should be on monitoring/values.yaml
 ```
 helm upgrade prometheus prometheus-community/prometheus -f values.yaml && kubectl patch ds monitoring-prometheus-node-exporter --type "json" -p '[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]'
 ```
-im sorry i already test it and it loss many metrics when using dashboard from template dashboard grafana :( and no time to resolve it.
+try to use grafana template dashboard
