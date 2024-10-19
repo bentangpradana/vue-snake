@@ -126,10 +126,10 @@ helm version
 
 ### Installing prometheus and grafana
 
-add the official repo 
+add repo
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo add grafana https://grafana.github.io/helm-charts
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 helm repo update
 ```
 check the repo list 
@@ -139,44 +139,10 @@ helm repo list
 
 installing prometheus
 ```
-helm install prometheus prometheus-community/prometheus
+helm install prometheus prometheus-community/kube-prometheus-stack
 ```
-check it ur pods its will be error in docker dekstop because the limitation on docker dekstop bind propagation defaults to rprivate for both bind mounts and volumes
+
+if the pods node exporter error
 ```
 kubectl patch ds monitoring-prometheus-node-exporter --type "json" -p '[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]'
 ```
-installing grafana
-```
-helm install grafana grafana/grafana
-```
-
-retrive the grafana password 
-```
-kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode
-
-```
-
-acces to grafana
-```
-kubectl port-forward service/grafana 3000:80
-```
-
-configure prometheus as a data source in grafana
-```
-once logged into grafana, add prometheus as a data source:
-
-go to configuration -> data sources.
-click add data source and select prometheus.
-set the url  to http://prometheus-server.default.svc.cluster.local:80.
-```
-
-deploy cadvisor it should be on monitoring/cadvisor.yaml
-```
-kubectl apply -f cadvisor.yaml
-```
-
-configure the cadvisor it should be on monitoring/values.yaml
-```
-helm upgrade prometheus prometheus-community/prometheus -f values.yaml && kubectl patch ds monitoring-prometheus-node-exporter --type "json" -p '[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]'
-```
-try to use grafana template dashboard
