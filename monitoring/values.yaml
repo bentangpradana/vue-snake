@@ -1,4 +1,0 @@
-additionalScrapeConfigs:
-  - job_name: 'cadvisor'
-    static_configs:
-      - targets: ['cadvisor:8080']
