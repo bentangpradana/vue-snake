@@ -146,3 +146,13 @@ if the pods node exporter error
 ```
 kubectl patch ds monitoring-prometheus-node-exporter --type "json" -p '[{"op": "remove", "path" : "/spec/template/spec/containers/0/volumeMounts/2/mountPropagation"}]'
 ```
+
+go to grafana dashboard
+```
+ kubectl port-forward deployment/prometheus-grafana 3000
+```
+default user and pass
+```
+user: admin
+pass: prom-prometheus
+```
