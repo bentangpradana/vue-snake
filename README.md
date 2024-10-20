@@ -132,7 +132,7 @@ helm repo add prometheus-community https://prometheus-community.github.io/helm-c
 helm repo add stable https://kubernetes-charts.storage.googleapis.com/
 helm repo update
 ```
-check the repo list 
+check the repo list  
 ```
 helm repo list
 ```
