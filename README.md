@@ -151,8 +151,40 @@ go to grafana dashboard
 ```
  kubectl port-forward deployment/prometheus-grafana 3000
 ```
+
+
 default user and pass
 ```
 user: admin
 pass: prom-prometheus
 ```
+
+1. Berapa lama waktu yang Anda habiskan untuk menyelesaikan coding test ini?
+2. Apa yang Anda pelajari atau tantangan terbesar yang Anda hadapi selama pengerjaan
+tugas ini?
+3. Apakah ada alternatif solusi atau pendekatan lain yang Anda pertimbangkan? Jelaskan.
+4. Bagaimana solusi yang Anda buat memastikan skalabilitas dan performa yang optimal?
+5. Bagaimana Anda akan meningkatkan keamanan dalam pipeline ini jika diterapkan pada
+lingkungan produksi?
+6. Apakah ada langkah tambahan yang bisa dilakukan untuk monitoring dan logging di aplikasi
+ini? (optional)
+
+jawaban:
+
+1. Menghabiskan waktu sekitar 2 hari untuk menyelesaikan tugas ini, mulai dari instalasi wsl,docker dekstop hingga penerapan pipeline dan monitoring menggunakan prometheus serta grafana.
+2. Tantangan terbesar adalah memastikan integrasi yang baik antara docker, kubernetes, dan ci/cd pipeline di gitLab. mengkonfigurasi gitlab-ci.yml untuk membangun dan menerapkan automation ci/cd, serta mengatasi 
+   masalah dengan node-exporter pada prometheus dan memastikan semuanya berjalan lancar.
+3. Saya mempertimbangkan beberapa pendekatan alternatif, seperti menggunakan jenkins sebagai ci/cd pipeline daripada gitLab ci/cd namun pada akhirnya saya memutuskan untuk menggunakan gitlab ci/cd karena saya 
+   merasa tidak perlu untuk menginstallasi jenkins dan hanya melakukan setup langsung ke runner dengan gitlab ci/cd . saya juga mempertimbangkan untuk menggunakan Minikube untuk menjalankan kubernetes secara 
+   local, tetapi saya memilih docker desktop dikarenakan saya merasa lebih mudah untuk diintegrasikan dengan wsl 2 di windows 11.
+4. Untuk memastikan skalabilitas dan performa, saya menggunakan kubernetes dengan menambah replika pod dengan menggunakan hpa. saya juga menerapkan monitoring dengan prometheus dan grafana untuk melihat performa 
+   aplikasi dan cluster kubernetes, yang memungkinkan saya dapat mendeteksi dini terhadap masalah yang mungkin mempengaruhi kinerja dari aplikasi.
+5. - penggunaan secrets semua kredensial dan informasi sensitif seperti username, password, dan token disimpan sebagai secrets di kubernetes dan gitLab ci/cdd, bukan hardcoded di file pipeline.
+   - image scanning melakukan scanning terhadap docker image untuk memastikan tidak ada kerentanan sebelum dipush ke registry mungkin dengan menggunakan trivy.
+   - menambahkan sonarqube dalam pipeline ci/cd untuk melakukan analisis code secara otomatis setiap kali ada perubahan code. sonarqube membantu mendeteksi bug, kerentanan keamanan, dan code smells. dengan ini, 
+     kita bisa memastikan kualitas code yang lebih baik dan keamanan yang lebih ketat dalam pengembangan.
+   - menggunakan RBAC di kubernetes untuk memastikan hanya user atau service account tertentu yang dapat mengakses dan mengelola resources.
+   - monitoring dan logging memantau pipeline dan cluster secara terus-menerus untuk mendeteksi aktivitas mencurigakan.
+6. - menambahkan loki sebagai solusi logging untuk aplikasi ataupun open telementry. ini akan memudahkan pengumpulan log aplikasi yang berjalan di dalam kubernetes.
+   - mengintegrasikan alertmanager untuk mengirimkan notifikasi ketika ada masalah dalam cluster kubernetes, seperti pod yang gagal atau penggunaan resource yang tinggi.
+   - mengkonfigurasi grafana dashboards yang lebih mendalam, dengan fokus pada monitoring resource cluster kubernetes dan juga pods aplikasi (cpu, memori, dll.) serta kinerja aplikasi.
